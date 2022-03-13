@@ -1,0 +1,36 @@
+name: Build docs
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["14.x"]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install redoc-cli
+        run: npm install -g redoc-cli
+
+      - name: Bundle
+        run: redoc-cli bundle ./reference/openapi.yaml
+
+      - name: Rename output
+        run: mv redoc-static.html index.html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force_orphan: true
+          publish_dir: .
+          exclude_assets: '.github,reference,README.md'
