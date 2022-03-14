@@ -6,183 +6,163 @@ info:
 servers:
   - url: 'http://localhost:3000'
 paths:
-  '/users/{userId}':
-    parameters:
-      - schema:
-          type: integer
-        name: userId
-        in: path
-        required: true
-        description: Id of an existing user.
+  /todos:
     get:
-      summary: Get User Info by User ID
+      summary: Your GET endpoint
       tags: []
       responses:
         '200':
-          description: User Found
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    todos:
+                      - id: 1
+                        todo: Todo1
+                        done: false
+                      - id: 2
+                        todo: Todo2
+                        done: true
+                      - id: 3
+                        todo: Todo3
+                        done: false
+                properties:
+                  todos:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      $ref: '#/components/schemas/Todo'
+                required:
+                  - todos
               examples:
-                Get User Alice Smith:
+                example-1:
                   value:
-                    id: 142
-                    firstName: Alice
-                    lastName: Smith
-                    email: alice.smith@gmail.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    signUpDate: '2019-08-24'
-        '404':
-          description: User Not Found
-      operationId: get-users-userId
-      description: Retrieve the information of the user with the matching user ID.
-    patch:
-      summary: Update User Information
-      operationId: patch-users-userId
-      responses:
-        '200':
-          description: User Updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-              examples:
-                Updated User Rebecca Baker:
-                  value:
-                    id: 13
-                    firstName: Rebecca
-                    lastName: Baker
-                    email: rebecca@gmail.com
-                    dateOfBirth: '1985-10-02'
-                    emailVerified: false
-                    createDate: '2019-08-24'
-        '404':
-          description: User Not Found
-        '409':
-          description: Email Already Taken
-      description: Update the information of an existing user.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                  description: 'If a new email is given, the user''s email verified property will be set to false.'
-                dateOfBirth:
-                  type: string
-            examples:
-              Update First Name:
-                value:
-                  firstName: Rebecca
-              Update Email:
-                value:
-                  email: rebecca@gmail.com
-              Update Last Name & Date of Birth:
-                value:
-                  lastName: Baker
-                  dateOfBirth: '1985-10-02'
-        description: Patch user properties to update.
-  /user:
+                    todos:
+                      - id: 1
+                        todo: string
+                        done: true
+                      - id: 2
+                        todo: string
+                        done: false
+      operationId: get-todos
+      description: Get list of todos
+  /todo:
     post:
-      summary: Create New User
-      operationId: post-user
+      summary: ''
+      operationId: post-todo
       responses:
         '200':
-          description: User Created
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Todo'
               examples:
-                New User Bob Fellow:
+                example-1:
                   value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
+                    todo: string
         '400':
-          description: Missing Required Information
-        '409':
-          description: Email Already Taken
+          description: Missing required information
+      description: Create Todo
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                firstName:
+                todo:
                   type: string
-                lastName:
-                  type: string
-                email:
-                  type: string
-                dateOfBirth:
-                  type: string
-                  format: date
-              required:
-                - firstName
-                - lastName
-                - email
-                - dateOfBirth
+                done:
+                  type: boolean
+                  default: false
             examples:
-              Create User Bob Fellow:
+              example-1:
                 value:
-                  firstName: Bob
-                  lastName: Fellow
-                  email: bob.fellow@gmail.com
-                  dateOfBirth: '1996-08-24'
-        description: Post the necessary fields for the API to create a new user.
-      description: Create a new user.
+                  todo: string
+  '/todo/{todoId}':
+    parameters:
+      - schema:
+          type: number
+        name: todoId
+        in: path
+        required: true
+        description: Target todo id
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: Todo found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Todo Not Found
+      operationId: get-todo-todoId
+      description: Get todo specified by ID
+    put:
+      summary: ''
+      operationId: put-todo-todoId
+      responses:
+        '200':
+          description: Updated todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+              examples:
+                example-1:
+                  value:
+                    id: 1
+                    todo: string
+                    done: true
+        '400':
+          description: Missing required information
+      description: Update todo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todo:
+                  type: string
+                done:
+                  type: boolean
+            examples:
+              example-1:
+                value:
+                  todo: string
+    delete:
+      summary: ''
+      operationId: delete-todo-todoId
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Target todo Not found
+      description: Delete todo
 components:
   schemas:
-    User:
-      title: User
+    Todo:
+      title: Todo
       type: object
-      description: ''
-      examples:
-        - id: 142
-          firstName: Alice
-          lastName: Smith
-          email: alice.smith@gmail.com
-          dateOfBirth: '1997-10-31'
-          emailVerified: true
-          signUpDate: '2019-08-24'
       properties:
         id:
-          type: integer
-          description: Unique identifier for the given user.
-        firstName:
+          type: number
+          minimum: 1
+        todo:
           type: string
-        lastName:
-          type: string
-        email:
-          type: string
-          format: email
-        dateOfBirth:
-          type: string
-          format: date
-          example: '1997-10-31'
-        emailVerified:
+        done:
           type: boolean
-          description: Set to true if the user's email has been verified.
-        createDate:
-          type: string
-          format: date
-          description: The date that the user was created.
-      required:
-        - id
-        - firstName
-        - lastName
-        - email
-        - emailVerified
