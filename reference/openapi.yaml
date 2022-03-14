@@ -1,0 +1,168 @@
+openapi: 3.1.0
+info:
+  title: redoc-test-api
+  version: '1.0'
+  description: This is a test of redoc api document generation
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /todos:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    todos:
+                      - id: 1
+                        todo: Todo1
+                        done: false
+                      - id: 2
+                        todo: Todo2
+                        done: true
+                      - id: 3
+                        todo: Todo3
+                        done: false
+                properties:
+                  todos:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      $ref: '#/components/schemas/Todo'
+                required:
+                  - todos
+              examples:
+                example-1:
+                  value:
+                    todos:
+                      - id: 1
+                        todo: string
+                        done: true
+                      - id: 2
+                        todo: string
+                        done: false
+      operationId: get-todos
+      description: Get list of todos
+  /todo:
+    post:
+      summary: ''
+      operationId: post-todo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+              examples:
+                example-1:
+                  value:
+                    todo: string
+        '400':
+          description: Missing required information
+      description: Create Todo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todo:
+                  type: string
+                done:
+                  type: boolean
+                  default: false
+            examples:
+              example-1:
+                value:
+                  todo: string
+  '/todo/{todoId}':
+    parameters:
+      - schema:
+          type: number
+        name: todoId
+        in: path
+        required: true
+        description: Target todo id
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: Todo found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Todo Not Found
+      operationId: get-todo-todoId
+      description: Get todo specified by ID
+    put:
+      summary: ''
+      operationId: put-todo-todoId
+      responses:
+        '200':
+          description: Updated todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+              examples:
+                example-1:
+                  value:
+                    id: 1
+                    todo: string
+                    done: true
+        '400':
+          description: Missing required information
+      description: Update todo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                todo:
+                  type: string
+                done:
+                  type: boolean
+            examples:
+              example-1:
+                value:
+                  todo: string
+    delete:
+      summary: ''
+      operationId: delete-todo-todoId
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Target todo Not found
+      description: Delete todo
+components:
+  schemas:
+    Todo:
+      title: Todo
+      type: object
+      properties:
+        id:
+          type: number
+          minimum: 1
+        todo:
+          type: string
+        done:
+          type: boolean
