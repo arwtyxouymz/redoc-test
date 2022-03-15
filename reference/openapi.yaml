@@ -87,7 +87,7 @@ paths:
   '/todo/{todoId}':
     parameters:
       - schema:
-          type: number
+          type: integer
         name: todoId
         in: path
         required: true
